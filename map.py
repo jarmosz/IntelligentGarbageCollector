@@ -27,7 +27,12 @@ def gridUsingRectangles():
 def renderWindow():
     screen.fill(WHITE)
     gridUsingRectangles()
+    colorRect(3, 4, BLACK)
     pygame.display.update()
+    
+
+def colorRect(x, y, color):
+    pygame.draw.rect(screen, color, pygame.Rect(x*cellSize, y*cellSize, cellSize, cellSize))
 
 while running:
     clock.tick(2)
