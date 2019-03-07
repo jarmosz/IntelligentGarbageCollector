@@ -28,14 +28,43 @@ def gridUsingRectangles():
 def renderWindow():
     screen.fill(WHITE)
     gridUsingRectangles()
-    Path(5)
+    generatePathAndPoints(5)
     pygame.display.update()
 
-def Path(n): #generuje n punktow i laczy je linia
+def generatePathAndPoints(n): #generuje n punktow i laczy je linia
     points = []
+    paths = []
     for i in range(n):
         points.append(tuple([randint(0, WIDTH), randint(0, HEIGHT)]))
-    pygame.draw.lines(screen, GREEN, True, points, 2)
+
+    paths = generateConsistentGraph(points)
+
+    print (paths)
+    for line in paths:
+        pygame.draw.lines(screen, BLACK, False, line)
+
+def generateConsistentGraph(points):
+    firstPointsCollection = []
+    secondPointsCollection = []
+    paths = []
+
+    firstRand = randint(0, len(points) - 1)
+    firstPointsCollection.append(points[firstRand])
+
+    secondPointsCollection = points.copy()
+    secondPointsCollection.remove(points[firstRand])
+
+    while len(secondPointsCollection) != 0:
+        secondRand = randint(0, len(firstPointsCollection) - 1)
+        thirdRand = randint(0, len(secondPointsCollection) - 1)
+        paths.append([firstPointsCollection[secondRand], secondPointsCollection[thirdRand]])
+        firstPointsCollection.append(secondPointsCollection[thirdRand])
+        secondPointsCollection.remove(secondPointsCollection[thirdRand])
+
+
+    return paths
+
+
 
 def colorRect(x, y, colour):
     pygame.draw.rect(screen, colour, pygame.Rect(x*cellSize, y*cellSize, cellSize, cellSize))
