@@ -1,8 +1,8 @@
 import os
 from DirectionNode import DirectionNode
-cross_road_path = 'sprites\crossroad.png'
-horizontal_stright_road = 'sprites\horizontal_straight_road.png'
-vertical_stright_road = 'sprites\\vertical_straight_road.png'
+cross_road_path = 'sprites/crossroad.png'
+horizontal_stright_road = 'sprites/horizontal_straight_road.png'
+vertical_stright_road = 'sprites/vertical_straight_road.png'
 
 
 class RoadNode(DirectionNode):
