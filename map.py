@@ -1,123 +1,83 @@
-import sys, pygame
+import sys
+import pygame
 from pygame.locals import *
 from random import randint
+import random
+import numpy as np
 
-WIDTH = 600
-HEIGHT = 500
-running = True
-cellSize = 20
+RES_X = 640
+RES_Y = 480
+CELL_SIZE = 20
+WIDTH = RES_X//CELL_SIZE
+HEIGHT = RES_Y//CELL_SIZE
+IS_RUNNING = True
 BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
+ORANGE = (255, 140, 0)
 GREEN = (0, 255, 0)
+SCREEN = pygame.display.set_mode((RES_X, RES_Y))
+CLOCK = pygame.time.Clock()
+GRID = np.zeros((WIDTH, HEIGHT), dtype='int8')
+MIN_ROADS_VERTICALLY = 4
+MAX_ROADS_VERTICALLY = 6
+MIN_ROADS_HORIZONTALLY = 4
+MAX_ROADS_HORIZONTALLY = 6
 
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-
-clock = pygame.time.Clock()
-
-def gridUsingLines():
-    for j in range(HEIGHT//cellSize+1): #+1 bo jak nie jest podzielne przez cellSize to na koncu sie nie rysuje
-        pygame.draw.line(screen, BLACK, (0, j*cellSize), (WIDTH, j*cellSize), 1)
-    for i in range(WIDTH//cellSize+1):
-        pygame.draw.line(screen, BLACK, (i*cellSize, 0), (i*cellSize, HEIGHT), 1)
-
-def gridUsingRectangles():
-    for j in range(HEIGHT//cellSize):
-        for i in range(WIDTH//cellSize):
-            pygame.draw.rect(screen, BLACK, pygame.Rect(i*cellSize, j*cellSize, cellSize, cellSize), 1)
-
-def renderWindow():
-    screen.fill(WHITE)
-    gridUsingRectangles()
-    generatePathAndPoints(5)
+def render_window():
     pygame.display.update()
 
-def generatePathAndPoints(n): #generuje n punktow i laczy je linia
-    points = []
-    paths = []
-    for i in range(n):
-        points.append(tuple([randint(0, WIDTH), randint(0, HEIGHT)]))
 
-    paths = generateConsistentGraph(points)
+def grid_create():
+    roads_horizontally = randint(MIN_ROADS_HORIZONTALLY, MAX_ROADS_HORIZONTALLY)
+    roads_vertically = randint(MIN_ROADS_VERTICALLY, MAX_ROADS_VERTICALLY)
+    garbage_zone_vert = []
+    garbage_zone_hor = []
+    i = 0
+    print('roads x: ' + str(roads_horizontally))
+    print('roads y: ' + str(roads_vertically))
+    while i < roads_vertically:
+        y = randint(1, WIDTH - 2)     
+        if(GRID[y, 0] == 0 and GRID[y - 1, 0] == 0 and GRID[y + 1, 0] == 0):
+            GRID[y, :] = 1
+            garbage_zone_vert += [y + 1, y - 1]
+            i += 1
+    i = 0
+    while i < roads_horizontally:  
+        x = randint(1, HEIGHT - 2) 
+        if(GRID[0, x] == 0 and GRID[0, x - 1] == 0 and GRID[0, x + 1] == 0):
+            GRID[:, x] = 1
+            garbage_zone_hor += [x + 1, x - 1]
+            i += 1
+    for i in range(randint(6, 20)):
+        rand_vert = random.choice(garbage_zone_vert)
+        rand_trashcan_vert = randint(0, HEIGHT - 1)
+        rand_hor = random.choice(garbage_zone_hor)
+        rand_trashcan_hor = randint(0, WIDTH - 1)
 
-    print (paths)
-    for line in paths:
-        pygame.draw.lines(screen, BLACK, False, line)
-
-def generateConsistentGraph(points):
-    firstPointsCollection = []
-    secondPointsCollection = []
-    paths = []
-
-    firstRand = randint(0, len(points) - 1)
-    firstPointsCollection.append(points[firstRand])
-
-    secondPointsCollection = points.copy()
-    secondPointsCollection.remove(points[firstRand])
-
-    while len(secondPointsCollection) != 0:
-        secondRand = randint(0, len(firstPointsCollection) - 1)
-        thirdRand = randint(0, len(secondPointsCollection) - 1)
-        paths.append([firstPointsCollection[secondRand], secondPointsCollection[thirdRand]])
-        firstPointsCollection.append(secondPointsCollection[thirdRand])
-        secondPointsCollection.remove(secondPointsCollection[thirdRand])
-
-
-    return paths
-
-
-
-def colorRect(x, y, colour):
-    pygame.draw.rect(screen, colour, pygame.Rect(x*cellSize, y*cellSize, cellSize, cellSize))
-
-def drawBetweenPoints(x1, y1, x2, y2): #to wyznacza niby droge ale po chuju strasznie
-    x = x1 #i tylko jesli x1<x2 i y1<y2 mozna to usunac
-    y = y1
-    colorRect(x, y, BLACK)
-    while x != x2 or y != y2:
-        a = randint(0,1)
-        if a == 0 and x!=x2:
-            x += 1
-            colorRect(x, y, BLACK)
-        elif a == 1 and y!=y2:
-            y += 1
-            colorRect(x, y, BLACK)
-    #colorRect
+        if(GRID[rand_vert, rand_trashcan_vert]) == 0:
+            GRID[rand_vert, rand_trashcan_vert] = 2
+        if(GRID[rand_trashcan_hor, rand_hor]) == 0:
+           GRID[rand_trashcan_hor, rand_hor] = 2
         
+    
+def grid_fill():
+    for j in range(HEIGHT):
+        for i in range(WIDTH):
+            if(GRID[i, j] == 0):
+                pygame.draw.rect(SCREEN, GREEN, pygame.Rect(i*CELL_SIZE, j*CELL_SIZE, CELL_SIZE, CELL_SIZE))
+            if(GRID[i, j] == 1):
+                pygame.draw.rect(SCREEN, BLACK, pygame.Rect(i*CELL_SIZE, j*CELL_SIZE, CELL_SIZE, CELL_SIZE))
+            if(GRID[i, j] == 2):
+                pygame.draw.rect(SCREEN, ORANGE, pygame.Rect(i*CELL_SIZE, j*CELL_SIZE, CELL_SIZE, CELL_SIZE))
 
-def drawRoad(length, startingX, startingY): # to tez slabe 
-    x = startingX
-    y = startingY
-    colored = []
-    colorRect(x, y, BLACK)
-    colored.append(tuple([x, y]))
-    for i in range(length):
-        direction = randint(1, 4) # 1 - up 2 - right 3 - down 4 - left
-        if direction == 1 and y > 0:
-            y -= 1
-            colorRect(x, y, BLACK)
-            colored.append(tuple([x, y]))
-        elif direction == 2 and x < WIDTH // cellSize:
-            x += 1
-            colorRect(x, y, BLACK)
-            colored.append(tuple([x, y]))
-        elif direction == 3 and y < HEIGHT // cellSize:
-            y += 1
-            colorRect(x, y, BLACK)
-            colored.append(tuple([x, y]))
-        elif direction == 4 and x > 0:
-            x -= 1
-            colorRect(x, y, BLACK)
-            colored.append(tuple([x, y]))
-        else:
-            i -= 1
+grid_create()
+grid_fill()
+print(GRID)
 
-
-while running:
-    clock.tick(2)
-    renderWindow()
+while IS_RUNNING:
+    CLOCK.tick(2)
+    render_window()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
-    
-    
-    
+
+
