@@ -18,10 +18,10 @@ screen = pygame.display.set_mode((RES_X, RES_Y))
 clock = pygame.time.Clock()
 grid = [[0] * WIDTH for i in range(HEIGHT)]
 MIN_ROADS_VERTICALLY = 4
-MAX_ROADS_VERTICALLY = 6
+MAX_ROADS_VERTICALLY = 6from
 MIN_ROADS_HORIZONTALLY = 4
 MAX_ROADS_HORIZONTALLY = 6
-
+p
 
 def render_window():
     grid_fill()
