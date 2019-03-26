@@ -3,7 +3,6 @@ import pygame
 from pygame.locals import *
 from random import randint
 import random
-import numpy as np
 
 RES_X = 1280
 RES_Y = 640
