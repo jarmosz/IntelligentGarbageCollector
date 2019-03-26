@@ -14,15 +14,18 @@ IS_RUNNING = True
 BLACK = (0, 0, 0)
 ORANGE = (255, 140, 0)
 GREEN = (0, 255, 0)
+RED = (255, 0, 0)
 screen = pygame.display.set_mode((RES_X, RES_Y))
-CLOCK = pygame.time.Clock()
+clock = pygame.time.Clock()
 grid = [[0] * WIDTH for i in range(HEIGHT)]
 MIN_ROADS_VERTICALLY = 4
 MAX_ROADS_VERTICALLY = 6
 MIN_ROADS_HORIZONTALLY = 4
 MAX_ROADS_HORIZONTALLY = 6
 
+
 def render_window():
+    grid_fill()
     pygame.display.update()
 
 
@@ -75,18 +78,50 @@ def grid_fill():
                 screen.blit(pygame.image.load('sprites/crossroad.png'), (j*CELL_SIZE, i*CELL_SIZE))
             if(grid[i][j] == 4):
                 pygame.draw.rect(screen, ORANGE, pygame.Rect(j*CELL_SIZE, i*CELL_SIZE, CELL_SIZE, CELL_SIZE))
-
-
+            if(grid[i][j] == 11 or grid[i][j] == 13):
+                screen.blit(pygame.image.load('sprites/truck_hor.png'), (j*CELL_SIZE, i*CELL_SIZE))
+            if(grid[i][j] == 12):
+                screen.blit(pygame.image.load('sprites/truck_ver.png'), (j*CELL_SIZE, i*CELL_SIZE))
+                   
 grid_create()
-for r in grid:
-    print(r)
-grid_fill()
 
+for i in range(HEIGHT): #places truck on the left end of the first found horinzontal road
+        if(grid[i][0]) == 1:
+            grid[i][0] += 10
+            break
+j = 0
 while IS_RUNNING:
-    CLOCK.tick(2)
-    render_window()
+    clock.tick(30)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
+    
+    
+    keys = pygame.key.get_pressed()
+
+    if keys[pygame.K_LEFT] and j > 0:
+        if grid[i][j-1] == 1 or grid[i][j-1] == 3:
+            grid[i][j-1] += 10
+            grid[i][j] -= 10
+            j -=1
+
+    elif keys[pygame.K_RIGHT] and j < WIDTH - 1:
+        if grid[i][j+1] == 1 or grid[i][j+1] == 3:
+            grid[i][j+1] += 10
+            grid[i][j] -= 10
+            j += 1
+        
+    elif keys[pygame.K_UP] and i > 0:
+        if grid[i-1][j] == 2 or grid[i-1][j] == 3:
+            grid[i-1][j] += 10
+            grid[i][j] -= 10
+            i -= 1
+    elif keys[pygame.K_DOWN] and i < HEIGHT-1:
+        if grid[i+1][j] == 2 or grid[i+1][j] == 3:
+            grid[i+1][j] += 10
+            grid[i][j] -= 10 
+            i += 1 
+
+    render_window()
 
 
