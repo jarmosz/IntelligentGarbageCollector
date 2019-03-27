@@ -3,14 +3,21 @@ import pygame
 from pygame.locals import *
 from random import randint
 import random
-
+CLOCK_TICK = 30
+TRUCK_LEFT = 'sprites/truck_left.png'
+TRUCK_TOP = 'sprites/truck_top.png'
+TRUCK_RIGHT = 'sprites/truck_right.png'
+TRUCK_DOWN = 'sprites/truck_down.png'
+EMPTY_TRASH = 'sprites/empty.png'
+YELLOW_TRASH = 'sprites/yellow.png'
+BLUE_TRASH = 'sprites/blue.jpg'
+RED_TRASH = 'sprites/red.png'
 RES_X = 1280
 RES_Y = 640
 CELL_SIZE = 32
 WIDTH = RES_X//CELL_SIZE
 HEIGHT = RES_Y//CELL_SIZE
 IS_RUNNING = True
-ORANGE = (255, 140, 0)
 screen = pygame.display.set_mode((RES_X, RES_Y))
 clock = pygame.time.Clock()
 grid = [[0] * WIDTH for i in range(HEIGHT)]
@@ -19,6 +26,9 @@ MAX_ROADS_VERTICALLY = 6
 MIN_ROADS_HORIZONTALLY = 4
 MAX_ROADS_HORIZONTALLY = 6
 
+truck_offset_x = 0
+truck_offset_y = 9
+truck_image = TRUCK_LEFT
 
 def render_window():
     grid_fill()
@@ -66,57 +76,117 @@ def grid_fill():
         for j in range(WIDTH):
             if(grid[i][j] == 0):
                 screen.blit(pygame.image.load('sprites/grass.png'), (j*CELL_SIZE, i*CELL_SIZE))
-            if(grid[i][j] == 1):
+            elif(grid[i][j] == 1):
                 screen.blit(pygame.image.load('sprites/horizontal_straight_road.png'), (j*CELL_SIZE, i*CELL_SIZE))
-            if(grid[i][j] == 2):
+            elif(grid[i][j] == 2):
                 screen.blit(pygame.image.load('sprites/vertical_straight_road.png'), (j*CELL_SIZE, i*CELL_SIZE))
-            if(grid[i][j] == 3):
+            elif(grid[i][j] == 3):
                 screen.blit(pygame.image.load('sprites/crossroad.png'), (j*CELL_SIZE, i*CELL_SIZE))
-            if(grid[i][j] == 4):
-                pygame.draw.rect(screen, ORANGE, pygame.Rect(j*CELL_SIZE, i*CELL_SIZE, CELL_SIZE, CELL_SIZE))
-            if(grid[i][j] == 11 or grid[i][j] == 13):
-                screen.blit(pygame.image.load('sprites/truck_hor.png'), (j*CELL_SIZE, i*CELL_SIZE))
-            if(grid[i][j] == 12):
-                screen.blit(pygame.image.load('sprites/truck_ver.png'), (j*CELL_SIZE, i*CELL_SIZE))
-                   
+            elif(grid[i][j] == 4):
+                screen.blit(pygame.image.load(EMPTY_TRASH), (j*CELL_SIZE, i*CELL_SIZE))
+            elif(grid[i][j] == 5):
+                screen.blit(pygame.image.load(YELLOW_TRASH), (j*CELL_SIZE, i*CELL_SIZE))
+            elif(grid[i][j] == 6):
+                screen.blit(pygame.image.load(BLUE_TRASH), (j*CELL_SIZE, i*CELL_SIZE))
+            elif (grid[i][j] == 7):
+                screen.blit(pygame.image.load(RED_TRASH), (j*CELL_SIZE, i*CELL_SIZE))
+
+            if(grid[i][j] == 11 or grid[i][j] == 13 or grid[i][j] == 12):
+                screen.blit(pygame.image.load(truck_image), (j*CELL_SIZE+truck_offset_x, i*CELL_SIZE+truck_offset_y))
 grid_create()
 
+def can_move_to(tile):
+    if tile == 2 or tile == 3 or tile == 1:
+        return True
+    else:
+        return False
+    
+def move(x,y,i,j):
+    x1 = i+x
+    y1 = j+y
+    if x1<0 or y1<0 or y1>WIDTH-1 or x1>HEIGHT-1:
+        return False
+    move_to = grid[x1][y1]
+    if move_to != 1 and move_to != 2 and move_to != 3:
+        return False
+    change_truck_sprite(x,y)
+    return (x1,y1)
+
+def change_truck_sprite(x,y):
+    global truck_image
+    global truck_offset_x
+    global truck_offset_y
+    truck_offset_y=0
+    truck_offset_x=0
+    if y == 1:
+        truck_image = TRUCK_RIGHT
+        truck_offset_y = 9
+    elif y == -1:
+        truck_image = TRUCK_LEFT
+        truck_offset_y = 9
+    elif x == -1:
+        truck_image = TRUCK_TOP
+        truck_offset_x = 9
+    elif x == 1:
+        truck_image = TRUCK_DOWN
+        truck_offset_x = 9
+
+def randomize_trashes():
+    for i, a in enumerate(grid):
+        for j,b in enumerate(a):
+            if b == 4:
+                grid[i][j] = randint(5,7)
+def collect_trash(i,j):
+    for x in range(5,8):
+        if grid[i+1][j] == x:
+            grid[i+1][j] =4
+        elif grid[i-1][j] ==x:
+            grid[i-1][j] = 4
+        elif grid[i][j+1] ==x:
+            grid[i][j+1]= 4
+        elif grid[i][j-1] ==x:
+            grid[i][j-1] = 4
+            
+grid_fill() #temporally to avoid some bug when truck is created on top of black tile instead of road
 for i in range(HEIGHT): #places truck on the left end of the first found horinzontal road
         if(grid[i][0]) == 1:
             grid[i][0] += 10
             break
 j = 0
+
+
 while IS_RUNNING:
-    clock.tick(30)
+    clock.tick(CLOCK_TICK)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
-    
-    
-    keys = pygame.key.get_pressed()
-
-    if keys[pygame.K_LEFT] and j > 0:
-        if grid[i][j-1] == 1 or grid[i][j-1] == 3:
-            grid[i][j-1] += 10
-            grid[i][j] -= 10
-            j -=1
-
-    elif keys[pygame.K_RIGHT] and j < WIDTH - 1:
-        if grid[i][j+1] == 1 or grid[i][j+1] == 3:
-            grid[i][j+1] += 10
-            grid[i][j] -= 10
-            j += 1
         
-    elif keys[pygame.K_UP] and i > 0:
-        if grid[i-1][j] == 2 or grid[i-1][j] == 3:
-            grid[i-1][j] += 10
-            grid[i][j] -= 10
-            i -= 1
-    elif keys[pygame.K_DOWN] and i < HEIGHT-1:
-        if grid[i+1][j] == 2 or grid[i+1][j] == 3:
-            grid[i+1][j] += 10
-            grid[i][j] -= 10 
-            i += 1 
+        
+        if event.type == pygame.KEYDOWN:
+            x=0
+            y=0
+            if event.key == pygame.K_UP: 
+                x = -1
+            elif event.key == pygame.K_LEFT:
+                y = -1
+            elif event.key == pygame.K_DOWN:
+                x = 1
+            elif event.key == pygame.K_RIGHT:
+                y= 1
+            elif event.key == pygame.K_r:
+                randomize_trashes()
+            elif event.key == pygame.K_SPACE:
+                collect_trash(i,j)
+            if x != 0 or y != 0:
+                k = move(x,y,i,j)
+                if k != False:
+                    grid[i][j] -=10
+                    i = k[0]
+                    j = k[1]
+                    grid[i][j] +=10
+                    k = False
+            
+
 
     render_window()
 
