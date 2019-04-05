@@ -13,7 +13,7 @@ while(True):
     map.get_truck_current_position_on_the_grid(truck)
     map.update_window()
 
-    # Simple movements test
+    # Added some simple movements test
     if(map.grid[truck.get_current_position_y()][truck.get_current_position_x()].get_type() == "cross_road"):
         truck.move_to(truck.get_current_position_x(), truck.get_current_position_y()+1)
     else:

@@ -34,8 +34,6 @@ class Truck:
                 self.current_position_x = 0
                 self.current_position_y = y
                 break
-        print(self.get_current_position_x())
-        print(self.get_current_position_y())
 
     def get_type(self):
         return self.type
