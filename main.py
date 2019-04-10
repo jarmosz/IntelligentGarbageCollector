@@ -4,7 +4,6 @@ import truck
 map = map.Map()
 
 map.generate_grid()
-map.render_window()
 
 truck = truck.Truck(map)
 
@@ -12,7 +11,8 @@ while(True):
     truck.set_current_map_state(map.get_grid())
     map.get_truck_current_position_on_the_grid(truck)
     map.update_window()
-
+    map.render_window()
+    
     # Added some simple movements test
     if(map.grid[truck.get_current_position_y()][truck.get_current_position_x()].get_type() == "cross_road"):
         truck.move_to(truck.get_current_position_x(), truck.get_current_position_y()+1)
