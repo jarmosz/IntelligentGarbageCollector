@@ -8,8 +8,8 @@ import sys
 
 move_list = []
     
-#_map.generate_grid()
-_map.import_map()
+_map.generate_grid()
+#_map.import_map()
 truck = truck.Truck(_map)
 truck.set_current_map_state(_map.get_grid())
 _map.set_truck_current_position_on_the_grid(truck)
@@ -18,8 +18,8 @@ _map.set_truck_current_position_on_the_grid(truck)
 #changing trash_emty to trash_yellow
 for i in _map.grid:
     for j in i: 
-        if j.get_type() == 'empty_trash':
-            j.type = "yellow_trash"
+       if j.get_type() == 'empty_trash':
+           j.type = "yellow_trash"
 
 move_list= DeepFirstSearch().start_dfs(_map,'yellow_trash')
 print("Move List - ",move_list)
