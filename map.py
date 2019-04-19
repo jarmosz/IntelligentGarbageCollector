@@ -4,32 +4,79 @@ import pygame
 from pygame.locals import * 
 from random import randint
 import random
-
+import copy
 import grass
 import road
 import trash
 import truck
 
 class Map:
-
     CLOCK_TICK = 30
-    RES_X = 1280
-    RES_Y = 640
+    RES_X = 160
+    RES_Y = 160
     CELL_SIZE = 32
     WIDTH = RES_X//CELL_SIZE
     HEIGHT = RES_Y//CELL_SIZE
-    MIN_ROADS_VERTICALLY = 4
-    MAX_ROADS_VERTICALLY = 6
-    MIN_ROADS_HORIZONTALLY = 4
-    MAX_ROADS_HORIZONTALLY = 6
+    MIN_ROADS_VERTICALLY =2
+    MAX_ROADS_VERTICALLY = 2
+    MIN_ROADS_HORIZONTALLY = 1
+    MAX_ROADS_HORIZONTALLY = 1
 
+    def __deepcopy__(self, memo):
+        cls = self.__class__
+        result = cls.__new__(cls)
+        memo[id(self)] = result
+        for k, v in self.__dict__.items():
+            if k=="grid" or k =="truck":
+                setattr(result, k, copy.deepcopy(v, memo))
+        return result
+
+    #def __deepcopy__(self, memo):
+     #   return Map(copy.deepcopy(self.truck,self.grid, memo))
 
     def __init__(self):
         self.screen = pygame.display.set_mode((self.RES_X, self.RES_Y))
         self.clock = pygame.time.Clock()
         self.grid = [[0] * self.WIDTH for i in range(self.HEIGHT)]
+        self.load_images()
+        self.truck = None
+ 
+    def load_images(self):
+        self.grass_image = pygame.image.load(grass.Grass.grass_path)
+        self.trash_empty_image = pygame.image.load(trash.Trash.trash_empty_path)
+        self.trash_yellow_image = pygame.image.load(trash.Trash.trash_yellow_path)
+        self.trash_red_image  = pygame.image.load(trash.Trash.trash_red_path)
+        self.trash_blue_image = pygame.image.load(trash.Trash.trash_blue_path)
+        self.road_horizontal_image = pygame.image.load(road.Road.road_horizontal_path)
+        self.road_vertical_image = pygame.image.load(road.Road.road_vertical_path)
+        self.road_crossroad_image = pygame.image.load(road.Road.road_crossroad_path)
+        self.top_truck_image = pygame.image.load(truck.Truck.truck_top_path)
+        self.down_truck_image = pygame.image.load(truck.Truck.truck_down_path)
+        self.left_truck_image = pygame.image.load(truck.Truck.truck_left_path)
+        self.right_truck_image = pygame.image.load(truck.Truck.truck_right_path)
+        
+        
 
 
+    def import_map(self):
+        self.grid = [
+            [0,0,0,0,0,0,0,0,0,5,0,0,0],
+            [0,0,0,3,1,1,1,1,1,1,1,3,0],
+            [0,0,0,2,0,0,0,0,0,0,0,2,0],
+            [0,0,0,2,0,0,0,0,0,0,0,2,0],
+            [1,1,1,3,0,0,0,0,0,0,0,2,0],
+            [0,0,0,2,0,0,0,0,0,0,0,2,0],
+            [0,0,0,2,0,0,0,0,0,0,0,2,0],
+            [0,0,0,3,1,1,1,1,1,1,1,3,0],
+            [0,0,0,0,0,0,0,0,0,5,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0]
+            ]
+
+
+        self.grid_refactoring()
     def generate_grid(self):
 
         roads_horizontally = randint(self.MIN_ROADS_HORIZONTALLY, self.MAX_ROADS_HORIZONTALLY)
@@ -105,7 +152,7 @@ class Map:
         self.grid[x][y] = new_object
 
 
-    def get_truck_current_position_on_the_grid(self, truck):
+    def set_truck_current_position_on_the_grid(self, truck):
         self.truck = truck
 
     def render_window(self):
@@ -114,17 +161,43 @@ class Map:
             if event.type == pygame.QUIT:
                 sys.exit()
 
+    def chose_image_to_display(self,type):
+        if type == 'grass':
+            return self.grass_image
+        elif type == 'horizontal_straight_road':
+            return self.road_horizontal_image
+        elif type == 'vertical_straight_road':
+            return self.road_vertical_image
+        elif type == 'cross_road':
+            return self.road_crossroad_image
+        elif type == 'empty_trash':
+            return self.trash_empty_image
+        elif type == 'yellow_trash':
+            return self.trash_yellow_image
+        elif type == 'blue_trash':
+            return self.trash.trash_blue_image
+        elif type == 'red_trash':
+            return self.trash_red_image
+        elif type == 'truck_left':
+            return self.left_truck_image
+        elif type == 'truck_right':
+            return self.right_truck_image
+        elif type == 'truck_down':
+            return self.down_truck_image
+        elif type == 'truck_top':
+            return self.top_truck_image
+        else:
+            print("error during chosing images")
+        
+        
+
 
     def render_map(self):
-        for i in range(self.HEIGHT):
-            for j in range(self.WIDTH):
-                if i == self.truck.get_current_position_y() and j == self.truck.get_current_position_x():
-                    self.screen.blit(pygame.image.load(self.grid[i][j].get_texture()), (j*self.CELL_SIZE, i*self.CELL_SIZE))
-                    self.screen.blit(pygame.image.load(self.truck.get_texture()), (j*self.CELL_SIZE, i*self.CELL_SIZE))
-                    self.truck.get_current_position_x()
-                    self.truck.get_current_position_y()
-                else:
-                    self.screen.blit(pygame.image.load(self.grid[i][j].get_texture()), (j*self.CELL_SIZE, i*self.CELL_SIZE))   
+
+        for idx,i in enumerate(self.grid):
+            for jdx,j in enumerate(i):
+                self.screen.blit(self.chose_image_to_display(j.get_type()), (jdx*self.CELL_SIZE, idx*self.CELL_SIZE))   
+        self.screen.blit(self.chose_image_to_display(self.truck.get_type()),(self.truck.get_current_position_x()*self.CELL_SIZE,self.truck.get_current_position_y()*self.CELL_SIZE))
 
 
     def update_window(self):

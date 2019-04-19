@@ -1,27 +1,22 @@
 from random import randint
 import random
-
+import os
 class Trash:
+    folder = os.path.dirname(os.path.realpath(__file__)) #get project's folder
+    trash_yellow_path = os.path.join(folder,'sprites/yellow.png')
+    trash_empty_path = os.path.join(folder,'sprites/empty.png')
+    trash_blue_path = os.path.join(folder,'sprites/blue.jpg')
+    trash_red_path = os.path.join(folder,'sprites/red.png')
 
     def __init__(self, type):
         self.type = type
-        self.texture = ''
-        self.set_texture()
-        self.capacity = randint(1, 1000)
+        self.capacity = randint(1, 100)
     
-    def set_texture(self):
-        if self.type == "empty_trash":
-            self.texture = 'sprites/empty.png'
-        elif self.type == "yellow_trash":
-            self.texture = 'sprites/yellow.png'
-        elif self.type == "blue_trash":
-            self.texture = 'sprites/blue.jpg'
-        elif self.type == "red_trash":
-            self.texture = 'sprites/red.png'
-    
-    def get_texture(self):
-        return self.texture
 
+    def empty_bin(self):
+        self.type = 'empty_trash'
+        self.capacity = 0
+        
     def get_type(self):
         return self.type
 
