@@ -1,5 +1,6 @@
 import map
 import os
+import math
 from moves import Move
 class Truck:
 
@@ -66,7 +67,33 @@ class Truck:
             trash_list.append(self.grid[y-1][x])
 
         return trash_list
-    
+
+
+    def find_next_trash_to_visit(self,type):
+        not_visited_trashes = []
+        for i in range(len(self.grid)):
+            for j in range(len(self.grid[0])):
+                if self.grid[i][j].get_type() == "yellow_trash":
+                    pom_list = []
+                    pom_list.append(j);
+                    pom_list.append(i)
+                    not_visited_trashes.append(pom_list)
+
+        x = self.get_current_position_x();
+        y = self.get_current_position_y();
+
+        #Heuristic, we want to know which empty trash is nearest to the truck position in this state.
+
+        measure = 100.0;
+        nearest_trash = [];
+        for trash in not_visited_trashes:
+            next_measure = math.sqrt((x - trash[0])**2 + (y - trash[1])**2)
+            if(next_measure < measure):
+                measure = next_measure
+                nearest_trash = trash[:]
+        
+        return nearest_trash
+
 
 
     def collect_trash(self,trash_to_collect):

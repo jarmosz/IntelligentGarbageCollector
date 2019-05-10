@@ -24,6 +24,8 @@ for i in _map.grid:
 move_list= DeepFirstSearch().start_dfs(_map,'yellow_trash')
 print("Move List - ",move_list)
 
+print("Nearest trash:", truck.find_next_trash_to_visit('yellow_trash'))
+
 j = 0
 while(True):
     if len(move_list)-1>= j:
