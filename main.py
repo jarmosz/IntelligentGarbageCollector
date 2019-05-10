@@ -5,7 +5,7 @@ from moves import Move
 from dfs import DeepFirstSearch
 _map = map.Map()
 import sys
-
+import random
 move_list = []
     
 _map.generate_grid()
@@ -18,7 +18,7 @@ _map.set_truck_current_position_on_the_grid(truck)
 #changing trash_emty to trash_yellow
 for i in _map.grid:
     for j in i: 
-       if j.get_type() == 'empty_trash':
+       if j.get_type() == 'empty_trash' and random.randrange(0,10)>6:
            j.type = "yellow_trash"
 
 move_list= DeepFirstSearch().start_dfs(_map,'yellow_trash')

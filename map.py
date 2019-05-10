@@ -11,9 +11,9 @@ import trash
 import truck
 
 class Map:
-    CLOCK_TICK = 30
-    RES_X = 160
-    RES_Y = 160
+    CLOCK_TICK = 5
+    RES_X = 192
+    RES_Y = 192
     CELL_SIZE = 32
     WIDTH = RES_X//CELL_SIZE
     HEIGHT = RES_Y//CELL_SIZE

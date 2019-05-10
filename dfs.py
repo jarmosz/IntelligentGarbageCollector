@@ -5,22 +5,27 @@ from moves import Move
 import sys
 type_of_trash = None
 move_list = []
+s = 0
 sys.setrecursionlimit(12000) 
 class DeepFirstSearch:
-    
     
     def start_dfs(self,_map,_type_of_trash):
         global type_of_trash
         type_of_trash = _type_of_trash
-
+ 
         self.create_tree(move_list,_map,0)
         return move_list
     def create_tree(self,current_move_list,current_grid,recursion_depth):
+        global s
+        print(s)
         recursion_depth +=1
         if recursion_depth >1300:
             return
         global type_of_trash
         global move_list
+        
+        s = s+1
+        print(s)
         if current_move_list != []: 
             last_move = current_move_list[-1] 
         else:
