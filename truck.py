@@ -95,6 +95,32 @@ class Truck:
         return nearest_trash
 
 
+    def generate_possible_moves_to_achieve_nearest_trash(self, nearest_trash):
+        x = self.get_current_position_x();
+        y = self.get_current_position_y();
+
+        possible_moves = []
+
+        if x < nearest_trash[0]:
+            if self.can_move_right():
+                possible_moves.append(Move.MOVE_RIGHT)
+
+        elif x > nearest_trash[0]:
+            if self.can_move_left():
+                possible_moves.append(Move.MOVE_LEFT)
+
+        elif x == nearest_trash[0] and y < nearest_trash[1]:
+            if self.can_move_down():
+                possible_moves.append(Move.MOVE_DOWN)
+
+        elif x == nearest_trash[0] and y > nearest_trash[1]:
+            if self.can_move_top():
+                possible_moves.append(Move.MOVE_TOP)
+
+        return possible_moves
+
+
+
 
     def collect_trash(self,trash_to_collect):
         trash_to_collect.empty_bin()

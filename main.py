@@ -3,6 +3,7 @@ import truck
 import copy
 from moves import Move
 from dfs import DeepFirstSearch
+from a_star import BestFirstSearch
 _map = map.Map()
 import sys
 import random
@@ -22,9 +23,9 @@ for i in _map.grid:
            j.type = "yellow_trash"
 
 move_list= DeepFirstSearch().start_dfs(_map,'yellow_trash')
+# move_list = BestFirstSearch().start_a_star(_map,'yellow_trash')
 print("Move List - ",move_list)
 
-print("Nearest trash:", truck.find_next_trash_to_visit('yellow_trash'))
 
 j = 0
 while(True):
