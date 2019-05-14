@@ -6,38 +6,41 @@ import sys
 type_of_trash = None
 move_list = []
 s = 0
-sys.setrecursionlimit(12000) 
+sys.setrecursionlimit(12000)
+
+
 class DeepFirstSearch:
-    
-    def start_dfs(self,_map,_type_of_trash):
+
+    def start_dfs(self, _map, _type_of_trash):
         global type_of_trash
         type_of_trash = _type_of_trash
- 
-        self.create_tree(move_list,_map,0)
+        self.create_tree(move_list, _map, 0)
         return move_list
-    def create_tree(self,current_move_list,current_grid,recursion_depth):
+
+    def create_tree(self, current_move_list, current_grid, recursion_depth):
         global s
         print(s)
-        recursion_depth +=1
-        if recursion_depth >1300:
+        recursion_depth += 1
+        if recursion_depth > 1300:
             return
         global type_of_trash
         global move_list
-        
+
         s = s+1
         print(s)
-        if current_move_list != []: 
-            last_move = current_move_list[-1] 
+        if current_move_list != []:
+            last_move = current_move_list[-1]
         else:
             last_move = ''
         last_move = self.reverse_move(last_move)
-        
+
         if self.check_if_is_done(current_grid):
-            if move_list == [] or len(move_list) >len(current_move_list):
+            if move_list == [] or len(move_list) > len(current_move_list):
                 move_list = current_move_list
             return
-        
-        trash_around = current_grid.truck.find_trash_around(type_of_trash) #returns list with trash of certain kind
+
+        trash_around = current_grid.truck.find_trash_around(
+            type_of_trash)  # returns list with trash of certain kind
         if trash_around != []:
             for i in trash_around:
                 new_grid = copy.deepcopy(current_grid)
@@ -46,7 +49,7 @@ class DeepFirstSearch:
                 tmp = new_grid.truck.find_trash_around(type_of_trash)
                 trash_to_collect_on_new_grid = tmp[0]
                 new_grid.truck.collect_trash(trash_to_collect_on_new_grid)
-                self.create_tree(new_move_lits,new_grid,recursion_depth)
+                self.create_tree(new_move_lits, new_grid, recursion_depth)
         else:
             possible_moves = current_grid.truck.possible_moves()
             if possible_moves == []:
@@ -57,16 +60,17 @@ class DeepFirstSearch:
                     new_move_list = copy.deepcopy(current_move_list)
                     new_grid.truck.make_move(i)
                     new_move_list.append(i)
-                    self.create_tree(new_move_list,new_grid,recursion_depth)
+                    self.create_tree(new_move_list, new_grid, recursion_depth)
         return
 
-    def check_if_is_done(self,m):
+    def check_if_is_done(self, m):
         for i in m.grid:
-            for j in i: 
+            for j in i:
                 if j.get_type() == type_of_trash:
                     return False
         return True
-    def reverse_move(self,move):
+
+    def reverse_move(self, move):
         last_move = ''
         if move == Move.MOVE_LEFT:
             last_move = Move.MOVE_RIGHT

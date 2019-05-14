@@ -120,6 +120,16 @@ class Map:
 
         self.grid_refactoring()
     
+    def if_all_trashes_visited(self):
+        visited = True
+        for i in range(self.HEIGHT):
+            for j in range(self.WIDTH):
+                self.grid[i][j].get_type() == "yellow_trash"
+                visited = False
+                break
+
+
+
 
     def grid_refactoring(self):
         for i in range(self.HEIGHT):
