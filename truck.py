@@ -167,6 +167,18 @@ class Truck:
             possible_moves.append(Move.MOVE_TOP)
         return possible_moves
 
+    def possible_cord(self):
+        possible_cord = []
+        if self.can_move_left():
+            possible_cord.append((self.current_position_x-1,self.current_position_y))
+        if self.can_move_down():
+            possible_cord.append((self.current_position_x,self.current_position_y+1))
+        if self.can_move_right():
+            possible_cord.append((self.current_position_x+1,self.current_position_y))
+        if self.can_move_top():
+            possible_cord.append((self.current_position_x,self.current_position_y-1))
+        return possible_cord
+
     def make_move(self,move):
         if move == Move.MOVE_LEFT:
             self.move_left()

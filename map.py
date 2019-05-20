@@ -11,7 +11,7 @@ import trash
 import truck
 
 class Map:
-    CLOCK_TICK = 5
+    CLOCK_TICK = 1
     RES_X = 192
     RES_Y = 192
     CELL_SIZE = 32
@@ -30,6 +30,8 @@ class Map:
             if k=="grid" or k =="truck":
                 setattr(result, k, copy.deepcopy(v, memo))
         return result
+
+    
 
     #def __deepcopy__(self, memo):
      #   return Map(copy.deepcopy(self.truck,self.grid, memo))
