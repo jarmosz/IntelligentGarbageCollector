@@ -1,7 +1,7 @@
 import sys
 import os
 import pygame
-from pygame.locals import * 
+from pygame.locals import *
 from random import randint
 import random
 import copy
@@ -31,6 +31,8 @@ class Map:
                 setattr(result, k, copy.deepcopy(v, memo))
         return result
 
+
+
     #def __deepcopy__(self, memo):
      #   return Map(copy.deepcopy(self.truck,self.grid, memo))
 
@@ -40,7 +42,7 @@ class Map:
         self.grid = [[0] * self.WIDTH for i in range(self.HEIGHT)]
         self.load_images()
         self.truck = None
- 
+
     def load_images(self):
         self.grass_image = pygame.image.load(grass.Grass.grass_path)
         self.trash_empty_image = pygame.image.load(trash.Trash.trash_empty_path)
@@ -54,8 +56,8 @@ class Map:
         self.down_truck_image = pygame.image.load(truck.Truck.truck_down_path)
         self.left_truck_image = pygame.image.load(truck.Truck.truck_left_path)
         self.right_truck_image = pygame.image.load(truck.Truck.truck_right_path)
-        
-        
+
+
 
 
     def import_map(self):
@@ -92,21 +94,21 @@ class Map:
         print('roads x: ' + str(roads_horizontally))
         print('roads y: ' + str(roads_vertically))
         while i < roads_horizontally:
-            y = randint(1, self.HEIGHT - 2)    
+            y = randint(1, self.HEIGHT - 2)
             if(self.grid[y][0] == 0 and self.grid[y - 1][0] == 0 and self.grid[y + 1][0] == 0):
                 for x in range(self.WIDTH):
                     self.grid[y][x] += 1
                 garbage_zone_vert += [y + 1, y - 1]
                 i += 1
         i = 0
-        while i < roads_vertically:  
-            x = randint(1, self.WIDTH - 2) 
+        while i < roads_vertically:
+            x = randint(1, self.WIDTH - 2)
             if(self.grid[0][x] == 0 and self.grid[0][x - 1] == 0 and self.grid[0][x + 1] == 0):
                 for j in self.grid:
                     j[x] += 2
                 garbage_zone_hor += [x + 1, x - 1]
                 i += 1
-    
+
         for i in range(randint(6, 20)):
             rand_vert = random.choice(garbage_zone_vert)
             rand_trashcan_vert = randint(0, self.WIDTH - 1)
@@ -119,7 +121,7 @@ class Map:
                 self.grid[rand_trashcan_hor][rand_hor] = 4
 
         self.grid_refactoring()
-    
+
     def if_all_trashes_visited(self):
         visited = True
         for i in range(self.HEIGHT):
@@ -151,7 +153,7 @@ class Map:
                 elif (self.grid[i][j] == 7):
                     self.grid[i][j] = trash.Trash("red_trash")
 
-    
+
     def get_grid(self):
         return self.grid
 
@@ -198,15 +200,15 @@ class Map:
             return self.top_truck_image
         else:
             print("error during chosing images")
-        
-        
+
+
 
 
     def render_map(self):
 
         for idx,i in enumerate(self.grid):
             for jdx,j in enumerate(i):
-                self.screen.blit(self.chose_image_to_display(j.get_type()), (jdx*self.CELL_SIZE, idx*self.CELL_SIZE))   
+                self.screen.blit(self.chose_image_to_display(j.get_type()), (jdx*self.CELL_SIZE, idx*self.CELL_SIZE))
         self.screen.blit(self.chose_image_to_display(self.truck.get_type()),(self.truck.get_current_position_x()*self.CELL_SIZE,self.truck.get_current_position_y()*self.CELL_SIZE))
 
 
@@ -214,5 +216,5 @@ class Map:
         self.render_map()
         pygame.display.update()
 
-    
+
 

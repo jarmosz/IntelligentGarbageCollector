@@ -69,6 +69,19 @@ class Truck:
 
         return trash_list
 
+    def find_trash(self, type, x, y):
+        trash_list=[]
+        if x< len(self.grid[0])-1 and self.grid[y][x+1].get_type() == type  :
+            trash_list.append(self.grid[y][x+1])
+        if x> 0 and self.grid[y][x-1].get_type() == type and x:
+            trash_list.append(self.grid[y][x-1])
+        if y <len(self.grid)-1 and self.grid[y+1][x].get_type() == type:
+            trash_list.append(self.grid[y+1][x])
+        if y>0 and self.grid[y-1][x].get_type() == type and y >=0 :
+            trash_list.append(self.grid[y-1][x])
+
+        return trash_list
+
     # Functions for A*
 
     # Count Heuristic via Manhattan format
@@ -144,17 +157,17 @@ class Truck:
             bottom = self.count_heuristic_from_a_to_b(x, y+1, nearest_trash[0], nearest_trash[1])
         else:
             bottom = 8000
-        
+
         if(self.can_move_left()):
              left = self.count_heuristic_from_a_to_b(x-1, y, nearest_trash[0], nearest_trash[1])
         else:
             left = 8000
-        
+
         if(self.can_move_top()):
             top = self.count_heuristic_from_a_to_b(x, y-1, nearest_trash[0], nearest_trash[1])
         else:
             top = 80000
-        
+
         if(self.can_move_right()):
             right = self.count_heuristic_from_a_to_b(x+1, y, nearest_trash[0], nearest_trash[1])
         else:
@@ -183,7 +196,7 @@ class Truck:
                 left = left - 500
             else:
                 left = left-500
-        
+
         if(d[0] == 'bottom' and bottom == right):
             if(self.count_route_wage_vertically_down(x, y+1, current_grid) > self.count_route_wage_horizontally_right(x+1, y, current_grid)):
                 bottom = bottom - 500
@@ -191,7 +204,7 @@ class Truck:
                 right = right - 500
             else:
                 right = right - 500
-        
+
         if(d[0] == 'bottom' and bottom == top):
             if(self.count_route_wage_vertically_down(x, y+1, current_grid) > self.count_route_wage_vertically_top(x, y-1, current_grid)):
                 bottom = bottom - 500
@@ -203,7 +216,7 @@ class Truck:
                 bottom = bottom - 500
             elif(self.count_route_wage_vertically_down(x, y+1, current_grid) < self.count_route_wage_vertically_top(x, y-1, current_grid)):
                 top = top - 500
-        
+
         if(d[0] == 'top' and left == top):
             if(self.count_route_wage_vertically_top(x, y-1, current_grid) > self.count_route_wage_horizontally_left(x-1, y, current_grid)):
                 top = top - 500
@@ -268,16 +281,16 @@ class Truck:
 
         if(recent_move == 'left'):
             right = right + 600
-            
+
         if(recent_move == 'right'):
             left = left + 600
 
         if(recent_move == 'bottom'):
             top = top + 600
-            
+
         if(recent_move == 'top'):
             bottom = bottom + 600
-        
+
         moves = {'bottom': bottom, 'left': left, 'top': top, 'right': right}
 
         d = sorted(moves, key=moves.__getitem__)
@@ -286,7 +299,7 @@ class Truck:
         print(moves)
 
         print(d)
- 
+
         if(d[0] == 'bottom'):
             possible_moves.append(Move.MOVE_DOWN)
         elif(d[0] == 'top'):
@@ -347,7 +360,19 @@ class Truck:
             possible_moves.append(Move.MOVE_TOP)
         return possible_moves
 
-    def make_move(self, move):
+    def possible_cord(self):
+        possible_cord = []
+        if self.can_move_left():
+            possible_cord.append((self.current_position_x-1,self.current_position_y))
+        if self.can_move_down():
+            possible_cord.append((self.current_position_x,self.current_position_y+1))
+        if self.can_move_right():
+            possible_cord.append((self.current_position_x+1,self.current_position_y))
+        if self.can_move_top():
+            possible_cord.append((self.current_position_x,self.current_position_y-1))
+        return possible_cord
+
+    def make_move(self,move):
         if move == Move.MOVE_LEFT:
             self.move_left()
         elif move == Move.MOVE_DOWN:

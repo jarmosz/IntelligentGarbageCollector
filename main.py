@@ -6,6 +6,7 @@ import copy
 from moves import Move
 from dfs import DeepFirstSearch
 from a_star import BestFirstSearch
+from bfs import BreathFirstSearch
 _map = map.Map()
 move_list = []
 
@@ -24,6 +25,7 @@ for i in _map.grid:
 
 #move_list = DeepFirstSearch().start_dfs(_map, 'yellow_trash')
 move_list = BestFirstSearch().start_A_star(_map, 'yellow_trash')
+#move_list = BreathFirstSearch().start_bfs(_map, 'yellow_trash')
 
 print("Końcowa lista ruchów")
 
@@ -39,13 +41,9 @@ while(True):
             truck.collect_trash(tmp[0])
         else:
             truck.make_move(move_list[j])
+            # truck.move_to(move_list[j][0], move_list[j][1])
 
         j = j+1
 
     _map.update_window()
-    _map.render_window()  # print(truck.can_move_left())
-    # Added some simple movements test
-    # if(_map.grid[truck.get_current_position_y()][truck.get_current_position_x()].get_type() == "cross_road"):
-    #    truck.move_to(truck.get_current_position_x(), truck.get_current_position_y()+1)
-    # else:
-    #   truck.move_to(truck.get_current_position_x() + 1, truck.get_current_position_y())
+    _map.render_window()
