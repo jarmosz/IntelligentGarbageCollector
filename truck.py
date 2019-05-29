@@ -67,6 +67,19 @@ class Truck:
             trash_list.append(self.grid[y-1][x])
 
         return trash_list
+    
+    def find_trash(self, type, x, y):
+        trash_list=[]
+        if x< len(self.grid[0])-1 and self.grid[y][x+1].get_type() == type  :
+            trash_list.append(self.grid[y][x+1])
+        if x> 0 and self.grid[y][x-1].get_type() == type and x:
+            trash_list.append(self.grid[y][x-1])
+        if y <len(self.grid)-1 and self.grid[y+1][x].get_type() == type:
+            trash_list.append(self.grid[y+1][x])
+        if y>0 and self.grid[y-1][x].get_type() == type and y >=0 :
+            trash_list.append(self.grid[y-1][x])
+
+        return trash_list
 
 
     def find_next_trash_to_visit(self,type):

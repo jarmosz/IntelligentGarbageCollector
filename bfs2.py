@@ -6,7 +6,7 @@ import sys
 type_of_trash = None
 move_list = []
 s = 0
-sys.setrecursionlimit(12000) 
+sys.setrecursionlimit(12000)
 class BreathFirstSearch:
     def start_bfs(self, _map,  _type_of_trash):
         global type_of_trash
@@ -36,22 +36,23 @@ class BreathFirstSearch:
                 for i in possible_cord:
                     new_path = list(path)
                     new_path.append(i)
-                    print(new_path)
                     queue.append(new_path)
                     explored.append(node)
                     trash_around = map.truck.find_trash(type_of_trash, i[0], i[1])
                     if trash_around != []:
-                        print(path[-1])
+                        print(new_path)
                         tmp = map.truck.find_trash(type_of_trash, i[0], i[1])
                         trash_to_collect = tmp[0]
                         map.truck.collect_trash(trash_to_collect)
-                        move_list += path[:]
-                        self.bfs_shortest_path(map,  path[-1], map.truck.find_next_trash_to_visit('yellow_trash') )
-                
-    
+                        move_list += new_path[1:]
+                        move_list.append("collect")
+                        #move_list.append(i)
+                        self.bfs_shortest_path(map,  new_path[-1], map.truck.find_next_trash_to_visit('yellow_trash') )
+
+
     def check_if_is_done(self,m):
         for i in m.grid:
-            for j in i: 
+            for j in i:
                 if j.get_type() == type_of_trash:
                     return False
         return True
