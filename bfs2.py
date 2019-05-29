@@ -20,6 +20,7 @@ class BreathFirstSearch:
         return move_list
 
     def bfs_shortest_path(self, map, start, goal):
+        global move_list
         if self.check_if_is_done(map):
             print("done")
             return
@@ -37,15 +38,16 @@ class BreathFirstSearch:
                     new_path.append(i)
                     print(new_path)
                     queue.append(new_path)
+                    explored.append(node)
                     trash_around = map.truck.find_trash(type_of_trash, i[0], i[1])
                     if trash_around != []:
                         print(path[-1])
                         tmp = map.truck.find_trash(type_of_trash, i[0], i[1])
                         trash_to_collect = tmp[0]
                         map.truck.collect_trash(trash_to_collect)
-                        move_list.append(new_path)
+                        move_list += path[:]
                         self.bfs_shortest_path(map,  path[-1], map.truck.find_next_trash_to_visit('yellow_trash') )
-                explored.append(node)
+                
     
     def check_if_is_done(self,m):
         for i in m.grid:
