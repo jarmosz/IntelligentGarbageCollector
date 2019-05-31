@@ -21,7 +21,7 @@ from bfs import BreathFirstSearch
 # # changing trash_emty to trash_yellow
 # for i in _map.grid:
 #     for j in i:
-#         if j.get_type() == 'empty_trash' and random.randrange(0, 10) > 3:
+#         if j.get_type() == 'empty_trash' and random.randrange(0, 10) > 0:
 #             j.type = "yellow_trash"
 
 # #move_list = DeepFirstSearch().start_dfs(_map, 'yellow_trash')

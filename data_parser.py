@@ -34,20 +34,20 @@ class DataParser:
             # Prepare trashes to visit
             for i in _map.grid:
                 for j in i:
-                    if j.get_type() == 'empty_trash' and randrange(0, 10) > 6:
+                    if j.get_type() == 'empty_trash' and randrange(0, 10) > 0:
                         j.type = "yellow_trash"
 
             move_list = BreathFirstSearch().start_bfs(_map, 'yellow_trash')
 
-            previous_node = []
-            for node in move_list:
-                if node != 'collect':
-                    list = self.get_square(node, _map.get_grid())
-                    print(list)
-                    if previous_node != []:
-                        f.write(str(self.parse_move(previous_node, node)
-                                    ) + " " + str(list) + "\n")
-                    previous_node = node[:]
+            move_list = [move for move in move_list if move != 'collect']
+
+            previous_node = move_list[0]
+            for i in range(1, len(move_list)):
+                list = self.get_square(move_list[i], _map.get_grid())
+                _parse_move = str(self.parse_move(previous_node, move_list[i]))
+                print("record saved")
+                f.write(_parse_move + " " + str(list) + "\n")
+                previous_node = move_list[i][:]
             counter += 1
         print("Data generated successfully!")
         f.close()
@@ -73,6 +73,9 @@ class DataParser:
             move.append(7)
         elif(previous[1] == next[1] and previous[0] < next[0]):
             move.append(8)
+        else:
+            move.append(previous)
+            move.append(next)
 
         return move
 
@@ -88,7 +91,6 @@ class DataParser:
         return square_list
 
     def get_square(self, current_position, grid):
-        print(current_position)
 
         if(current_position[0] == 0 or current_position[0] == 1):
             if current_position[1] == 0 or current_position[1] == 1:
