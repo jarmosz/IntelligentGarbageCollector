@@ -12,15 +12,15 @@ import truck
 
 class Map:
     CLOCK_TICK = 5
-    RES_X = 192
-    RES_Y = 192
+    RES_X = 32*6
+    RES_Y = 32*6
     CELL_SIZE = 32
     WIDTH = RES_X//CELL_SIZE
     HEIGHT = RES_Y//CELL_SIZE
-    MIN_ROADS_VERTICALLY =2
+    MIN_ROADS_VERTICALLY = 2
     MAX_ROADS_VERTICALLY = 2
-    MIN_ROADS_HORIZONTALLY = 1
-    MAX_ROADS_HORIZONTALLY = 1
+    MIN_ROADS_HORIZONTALLY = 2
+    MAX_ROADS_HORIZONTALLY = 2
 
     def __deepcopy__(self, memo):
         cls = self.__class__
@@ -215,6 +215,3 @@ class Map:
     def update_window(self):
         self.render_map()
         pygame.display.update()
-
-
-

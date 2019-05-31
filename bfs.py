@@ -10,11 +10,9 @@ sys.setrecursionlimit(12000)
 class BreathFirstSearch:
     def start_bfs(self, _map,  _type_of_trash):
         global type_of_trash
-        global q
         type_of_trash = _type_of_trash
         starting_pos = ((_map.truck.get_current_position_x(),
                         _map.truck.get_current_position_y()))
-        goal = (4, 5)
         map = copy.deepcopy(_map)
         self.bfs_shortest_path(map, starting_pos, _map.truck.find_next_trash_to_visit('yellow_trash'))
         return move_list
@@ -26,7 +24,8 @@ class BreathFirstSearch:
             return
         explored = []
         queue = [[start]]
-        print("goal:", goal)
+        if explored == []:
+            self.find_trash_around(start[0], start[1], map, [(), (start)])
         while queue:
             path = queue.pop(0)
             node = path[-1]
@@ -38,16 +37,7 @@ class BreathFirstSearch:
                     new_path.append(i)
                     queue.append(new_path)
                     explored.append(node)
-                    trash_around = map.truck.find_trash(type_of_trash, i[0], i[1])
-                    if trash_around != []:
-                        print(new_path)
-                        tmp = map.truck.find_trash(type_of_trash, i[0], i[1])
-                        trash_to_collect = tmp[0]
-                        map.truck.collect_trash(trash_to_collect)
-                        move_list += new_path[1:]
-                        move_list.append("collect")
-                        #move_list.append(i)
-                        self.bfs_shortest_path(map,  new_path[-1], map.truck.find_next_trash_to_visit('yellow_trash') )
+                    self.find_trash_around(i[0], i[1], map, new_path)
 
 
     def check_if_is_done(self,m):
@@ -56,3 +46,14 @@ class BreathFirstSearch:
                 if j.get_type() == type_of_trash:
                     return False
         return True
+
+    def find_trash_around(self, x, y, map, new_path):
+        global move_list
+        trash_around = map.truck.find_trash(type_of_trash, x, y)
+        if trash_around != []:
+            tmp = map.truck.find_trash(type_of_trash, x, y)
+            trash_to_collect = tmp[0]
+            map.truck.collect_trash(trash_to_collect)
+            move_list += new_path[1:]
+            move_list.append("collect")
+            self.bfs_shortest_path(map,  new_path[-1], map.truck.find_next_trash_to_visit('yellow_trash') )
