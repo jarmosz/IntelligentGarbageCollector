@@ -5,13 +5,11 @@ from moves import Move
 import sys
 type_of_trash = None
 move_list = []
-s = 0
-sys.setrecursionlimit(12000)
-
 
 class BreathFirstSearch:
     def start_bfs(self, _map,  _type_of_trash):
-        global type_of_trash
+        global move_list, type_of_trash
+        move_list = []
         type_of_trash = _type_of_trash
         starting_pos = ((_map.truck.get_current_position_x(),
                          _map.truck.get_current_position_y()))
