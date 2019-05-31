@@ -12,15 +12,15 @@ import truck
 
 class Map:
     CLOCK_TICK = 5
-    RES_X = 32*6
-    RES_Y = 32*6
+    RES_X = 32 * 15
+    RES_Y = 32 * 15
     CELL_SIZE = 32
     WIDTH = RES_X//CELL_SIZE
     HEIGHT = RES_Y//CELL_SIZE
-    MIN_ROADS_VERTICALLY = 2
-    MAX_ROADS_VERTICALLY = 2
+    MIN_ROADS_VERTICALLY =4
+    MAX_ROADS_VERTICALLY = 6
     MIN_ROADS_HORIZONTALLY = 2
-    MAX_ROADS_HORIZONTALLY = 2
+    MAX_ROADS_HORIZONTALLY = 6
 
     def __deepcopy__(self, memo):
         cls = self.__class__
@@ -36,12 +36,24 @@ class Map:
     #def __deepcopy__(self, memo):
      #   return Map(copy.deepcopy(self.truck,self.grid, memo))
 
-    def __init__(self):
+    def __init__(self, res):
+        self.config_window_display(res)
         self.screen = pygame.display.set_mode((self.RES_X, self.RES_Y))
         self.clock = pygame.time.Clock()
         self.grid = [[0] * self.WIDTH for i in range(self.HEIGHT)]
         self.load_images()
         self.truck = None
+
+    def config_window_display(self, res):
+        self.RES_X = 32 * res
+        self.RES_Y = 32 * res
+        self.WIDTH = self.RES_X//self.CELL_SIZE
+        self.HEIGHT = self.RES_Y//self.CELL_SIZE
+        self.MIN_ROADS_VERTICALLY = 2
+        self.MAX_ROADS_VERTICALLY = res//3
+        self.MIN_ROADS_HORIZONTALLY = 2
+        self.MAX_ROADS_HORIZONTALLY = res//3
+
 
     def load_images(self):
         self.grass_image = pygame.image.load(grass.Grass.grass_path)

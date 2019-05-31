@@ -7,14 +7,17 @@ type_of_trash = None
 move_list = []
 s = 0
 sys.setrecursionlimit(12000)
+
+
 class BreathFirstSearch:
     def start_bfs(self, _map,  _type_of_trash):
         global type_of_trash
         type_of_trash = _type_of_trash
         starting_pos = ((_map.truck.get_current_position_x(),
-                        _map.truck.get_current_position_y()))
+                         _map.truck.get_current_position_y()))
         map = copy.deepcopy(_map)
-        self.bfs_shortest_path(map, starting_pos, _map.truck.find_next_trash_to_visit('yellow_trash'))
+        self.bfs_shortest_path(
+            map, starting_pos, _map.truck.find_next_trash_to_visit('yellow_trash'))
         return move_list
 
     def bfs_shortest_path(self, map, start, goal):
@@ -39,8 +42,7 @@ class BreathFirstSearch:
                     explored.append(node)
                     self.find_trash_around(i[0], i[1], map, new_path)
 
-
-    def check_if_is_done(self,m):
+    def check_if_is_done(self, m):
         for i in m.grid:
             for j in i:
                 if j.get_type() == type_of_trash:
@@ -56,4 +58,5 @@ class BreathFirstSearch:
             map.truck.collect_trash(trash_to_collect)
             move_list += new_path[1:]
             move_list.append("collect")
-            self.bfs_shortest_path(map,  new_path[-1], map.truck.find_next_trash_to_visit('yellow_trash') )
+            self.bfs_shortest_path(
+                map,  new_path[-1], map.truck.find_next_trash_to_visit('yellow_trash'))

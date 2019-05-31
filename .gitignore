@@ -116,3 +116,6 @@ dmypy.json
 .pyre/
 
 .vscode/
+
+# Learning data file
+learning_data.txt
