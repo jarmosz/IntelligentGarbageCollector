@@ -24,8 +24,8 @@ class BreathFirstSearch:
             return
         explored = []
         queue = [[start]]
-        if explored == []:
-            self.find_trash_around(start[0], start[1], map, [(), (start)])
+        if move_list == [] or move_list[-1] == 'collect':
+            self.find_trash_around(start[0], start[1], map, [(start)])
         while queue:
             path = queue.pop(0)
             node = path[-1]
