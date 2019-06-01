@@ -5,13 +5,12 @@ from moves import Move
 import sys
 type_of_trash = None
 move_list = []
-s = 0
-sys.setrecursionlimit(12000)
 
 
 class BreathFirstSearch:
     def start_bfs(self, _map,  _type_of_trash):
-        global type_of_trash
+        global move_list, type_of_trash
+        move_list = []
         type_of_trash = _type_of_trash
         starting_pos = ((_map.truck.get_current_position_x(),
                          _map.truck.get_current_position_y()))
@@ -27,8 +26,8 @@ class BreathFirstSearch:
             return
         explored = []
         queue = [[start]]
-        if explored == []:
-            self.find_trash_around(start[0], start[1], map, [(), (start)])
+        if move_list == [] or move_list[-1] == 'collect':
+            self.find_trash_around(start[0], start[1], map, [(start)])
         while queue:
             path = queue.pop(0)
             node = path[-1]

@@ -6,26 +6,18 @@ from random import randint, randrange
 
 class DataParser:
 
-    # Movements codes for decision tree:
-    # top - 5
-    # down - 6
-    # left - 7
-    # right - 8
-
-    # Objects codes for decision tree:
-    # grass - 1, road - 2, trash_empty - 3, trash_full - 4, truck - 5
-
-    # If changed, please adjust appropriate minimum amount of generated roads,
-    LEARNING_DATA_AMOUNT = 100
-    # You have to adjust box range depending on SQUARE_SIZE if changed
+    LEARNING_DATA_AMOUNT = 150
     SQUARE_SIZE = 5
-    MAP_RESOLUTION = 40
+    MAP_RESOLUTION = 15
+    METHOD = "parse"
 
     def generate_learning_data(self):
+        self.METHOD = "learning"
         counter = 0
+        f = open("learning_data.txt", "w")
         while(counter < self.LEARNING_DATA_AMOUNT):
             move_list = []
-            f = open("learning_data.txt", "w")
+
             _map = map.Map(self.MAP_RESOLUTION)
             _map.generate_grid()
             _truck = truck.Truck(_map)
@@ -34,22 +26,28 @@ class DataParser:
             # Prepare trashes to visit
             for i in _map.grid:
                 for j in i:
-                    if j.get_type() == 'empty_trash' and randrange(0, 10) > 6:
+                    if j.get_type() == 'empty_trash' and randrange(0, 10) > 0:
                         j.type = "yellow_trash"
 
             move_list = BreathFirstSearch().start_bfs(_map, 'yellow_trash')
+            decisions = len(move_list)
 
-            previous_node = []
-            for node in move_list:
-                if node != 'collect':
-                    list = self.get_square(node, _map.get_grid())
-                    print(list)
-                    if previous_node != []:
-                        f.write(str(self.parse_move(previous_node, node)
-                                    ) + " " + str(list) + "\n")
-                    previous_node = node[:]
+            move_list = [move for move in move_list if move != 'collect']
+
+            decisions2 = len(move_list)
+
+            previous_node = move_list[0]
+            for i in range(1, len(move_list)):
+                list = self.get_square(move_list[i], _map.get_grid())
+                print("record saved")
+                f.write(str(self.parse_move(previous_node,
+                                            move_list[i])) + " " + str(list) + "\n")
+                previous_node = move_list[i][:]
             counter += 1
+            print("BFS-PRZED:", decisions)
+            print("BFS-PO:", decisions2)
         print("Data generated successfully!")
+        self.METHOD = 'parse'
         f.close()
 
     def convert_node_type(self, x, y, nodes):
@@ -73,11 +71,15 @@ class DataParser:
             move.append(7)
         elif(previous[1] == next[1] and previous[0] < next[0]):
             move.append(8)
+        else:
+            move.append(previous)
+            move.append(next)
 
         return move
 
     def convert_small_grid(self, current_position, grid, first_range_start, first_range_end, second_range_start, second_range_end):
         square_list = []
+
         for i in range(first_range_start, first_range_end):
             for j in range(second_range_start, second_range_end):
                 if i == current_position[1] and j == current_position[0]:
@@ -85,10 +87,28 @@ class DataParser:
                 else:
                     square_list.append(
                         self.convert_node_type(j, i, grid))
+
         return square_list
 
+    def update_grid(self, current_position, grid):
+        trash_list = []
+        x = current_position[0]
+        y = current_position[1]
+        type = 'yellow_trash'
+
+        if x < len(grid[0])-1 and grid[y][x+1].get_type() == type:
+            grid[y][x+1].type = 'empty_trash'
+        if x > 0 and grid[y][x-1].get_type() == type and x:
+            grid[y][x-1].type = 'empty_trash'
+        if y < len(grid)-1 and grid[y+1][x].get_type() == type:
+            grid[y+1][x].type = 'empty_trash'
+        if y > 0 and grid[y-1][x].get_type() == type and y >= 0:
+            grid[y-1][x].type = 'empty_trash'
+
     def get_square(self, current_position, grid):
-        print(current_position)
+
+        if(self.METHOD == 'learning'):
+            self.update_grid(current_position, grid)
 
         if(current_position[0] == 0 or current_position[0] == 1):
             if current_position[1] == 0 or current_position[1] == 1:
