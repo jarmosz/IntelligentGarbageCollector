@@ -126,11 +126,8 @@ class Map:
                 i += 1
         garbage_zone_hor = list(set(garbage_zone_hor))
         garbage_zone_ver = list(set(garbage_zone_ver))
-        for i in self.grid:
-            print(i)
         print('hor', garbage_zone_hor)
         print('ver', garbage_zone_ver)
-        print(self.grid[1][2])
         garbage_zone = []
         for i in garbage_zone_hor:
             for j in range(0, self.WIDTH):

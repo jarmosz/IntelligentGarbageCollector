@@ -6,8 +6,8 @@ from itertools import groupby
 # 0 - grass 1 - road 2 - trash empty 3 - trash full
 class VowpalParser:
     SQUARE_SIZE = 5
-    MAP_RESOLUTION = 30
-    NUMBER_OF_MAPS = 10
+    MAP_RESOLUTION = 10
+    NUMBER_OF_MAPS = 1
     def collect_data(self):
         f = open("vowpal_data.txt", "w")
         for j in range(self.NUMBER_OF_MAPS):
@@ -18,19 +18,25 @@ class VowpalParser:
             map_numerical = _map.get_grid_numerical()
             move_list = [(_truck.current_position_x, _truck.current_position_y)]
             move_list += BreathFirstSearch().start_bfs(_map, 'yellow_trash')
-            current = move_list[0]
+            prev = move_list[0]
+            print(move_list)
+            print(map_numerical)
+            #for i in move_list[2:]:
+            #    if i == 'collect'
             for i in range(1, len(move_list)):
                 if move_list[i] == 'collect':
-                    square_state = self.get_grid_square(map_numerical, current)
-                    move = 'c'                
+                    square_state = self.get_grid_square(map_numerical, prev)
+                    move = 'c'
+                    state = ' '.join(' '.join(str(x) for x in row) for row in square_state)                   
                 else:
-                    square_state = self.get_grid_square(map_numerical, move_list[i])
-                    move = str(self.parse_move(current, move_list[i]))
-                    current = move_list[i]
+                    square_state = self.get_grid_square(map_numerical, prev)
+                    move = str(self.parse_move(prev, move_list[i]))
+                    prev = move_list[i]
+                #print('{}\n{}'.format(move, square_state))
                 state = ' '.join(' '.join(str(x) for x in row) for row in square_state)            
                 f.write("{}|{}\n".format(str(move), state))
-                square_state = self.empty_trash(square_state)
-        f.close()
+                square_state = self.empty_trash(square_state)                
+            f.close()
         while(True):
             _map.update_window()
             _map.render_window()
