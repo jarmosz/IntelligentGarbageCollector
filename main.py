@@ -8,6 +8,9 @@ from moves import Move
 from dfs import DeepFirstSearch
 from a_star import BestFirstSearch
 from bfs import BreathFirstSearch
+import vowpal_parser
+vowpal = vowpal_parser.VowpalParser()
+vowpal.collect_data()
 # # _map = map.Map(20)
 # # move_list = []
 
@@ -48,6 +51,6 @@ from bfs import BreathFirstSearch
 # #     _map.update_window()
 # #     _map.render_window()
 
-_data_parser = data_parser.DataParser()
+#_data_parser = data_parser.DataParser()
 
-_data_parser.generate_learning_data()
+#_data_parser.generate_learning_data()

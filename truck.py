@@ -40,6 +40,7 @@ class Truck:
     def set_starting_position_on_the_grid(self):
         for y in range(len(self.grid)):
             if self.grid[y][0].get_type() == "horizontal_straight_road":
+            #if self.grid[y][0] == 2:
                 self.current_position_x = 0
                 self.current_position_y = y
                 break

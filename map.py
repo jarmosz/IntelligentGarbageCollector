@@ -9,18 +9,19 @@ import grass
 import road
 import trash
 import truck
+import numpy as np
 
 class Map:
-    CLOCK_TICK = 5
-    RES_X = 32 * 15
-    RES_Y = 32 * 15
+    CLOCK_TICK = 5    
     CELL_SIZE = 32
-    WIDTH = RES_X//CELL_SIZE
-    HEIGHT = RES_Y//CELL_SIZE
-    MIN_ROADS_VERTICALLY =4
-    MAX_ROADS_VERTICALLY = 6
+    WIDTH = 15
+    HEIGHT = 15
+    RES_X = WIDTH * CELL_SIZE
+    RES_Y = HEIGHT * CELL_SIZE
+    MIN_ROADS_VERTICALLY =2
+    MAX_ROADS_VERTICALLY = 2
     MIN_ROADS_HORIZONTALLY = 2
-    MAX_ROADS_HORIZONTALLY = 6
+    MAX_ROADS_HORIZONTALLY = 2
 
     def __deepcopy__(self, memo):
         cls = self.__class__
@@ -175,6 +176,26 @@ class Map:
     def set_grid_cell(self, x, y, new_object):
         self.grid[x][y] = new_object
 
+    def get_grid_part(self, start, stop):
+        x1, y1 = start
+        x2, y2 = stop
+        square = np.array(self.grid)
+        return square[y1:y2+1, x1:x2+1]
+    
+    def get_grid_numerical(self):
+        grid = np.array(self.grid)
+        numerical_grid = np.array([self.type_as_num(row) for row in grid])
+        numerical_grid = np.pad(numerical_grid, pad_width=2,mode='constant')
+        return numerical_grid
+
+    def type_as_num(self, objects):
+        types_nums={"grass":0,
+                    'horizontal_straight_road':1,
+                    'vertical_straight_road':1,
+                    'cross_road':1, 
+                    'empty_trash':2,
+                    'yellow_trash':3 }
+        return [types_nums[obj.type] for obj in objects]
 
     def set_truck_current_position_on_the_grid(self, truck):
         self.truck = truck
