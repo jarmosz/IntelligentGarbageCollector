@@ -2,9 +2,11 @@ import map
 import truck
 from bfs import BreathFirstSearch
 from itertools import groupby
+
+# 0 - grass 1 - road 2 - trash empty 3 - trash full
 class VowpalParser:
     SQUARE_SIZE = 5
-    MAP_RESOLUTION = 6
+    MAP_RESOLUTION = 40
 
     def collect_data(self):
         f = open("vowpal_data.txt", "w")
@@ -15,21 +17,18 @@ class VowpalParser:
         map_numerical = _map.get_grid_numerical()
         move_list = [(_truck.current_position_x, _truck.current_position_y)]
         move_list += BreathFirstSearch().start_bfs(_map, 'yellow_trash')
-        #move_list = [i[0] for i in groupby(move_list)]
-        #move_list = [move for move in move_list if move != 'collect']
         print(move_list)
-        prev = move_list[0]
+        current = move_list[0]
         for i in range(1, len(move_list)):
-            print('prev:', prev)
+            print('curr:', current)
             if move_list[i] == 'collect':
-                square_state = self.get_grid_square(map_numerical, prev)
-                #print('tu',square_state)
+                square_state = self.get_grid_square(map_numerical, current)
                 move = 'c'                
             else:
                 square_state = self.get_grid_square(map_numerical, move_list[i])
-                move = str(self.parse_move(prev, move_list[i]))
-                prev = move_list[i]
-            print('{}|{}'.format(move, square_state))
+                move = str(self.parse_move(current, move_list[i]))
+                current = move_list[i]
+            print('move:{}\n{}'.format(move, square_state))
             state = ' '.join(' '.join(str(x) for x in row) for row in square_state)            
             f.write("{}|{}\n".format(str(move), state))
             square_state = self.empty_trash(square_state)

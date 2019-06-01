@@ -22,6 +22,7 @@ class Map:
     MAX_ROADS_VERTICALLY = 2
     MIN_ROADS_HORIZONTALLY = 2
     MAX_ROADS_HORIZONTALLY = 2
+    NUMBER_OF_TRASH = 5
 
     def __deepcopy__(self, memo):
         cls = self.__class__
@@ -51,10 +52,11 @@ class Map:
         self.RES_Y = 32 * res
         self.WIDTH = self.RES_X//self.CELL_SIZE
         self.HEIGHT = self.RES_Y//self.CELL_SIZE
-        self.MIN_ROADS_VERTICALLY = 2
+        self.MIN_ROADS_VERTICALLY = res//4
         self.MAX_ROADS_VERTICALLY = res//3
-        self.MIN_ROADS_HORIZONTALLY = 2
+        self.MIN_ROADS_HORIZONTALLY = res//4
         self.MAX_ROADS_HORIZONTALLY = res//3
+        self.NUMBER_OF_TRASH = res
 
 
     def load_images(self):
@@ -102,7 +104,7 @@ class Map:
 
         roads_horizontally = randint(self.MIN_ROADS_HORIZONTALLY, self.MAX_ROADS_HORIZONTALLY)
         roads_vertically = randint(self.MIN_ROADS_VERTICALLY, self.MAX_ROADS_VERTICALLY)
-        garbage_zone_vert = []
+        garbage_zone_ver = []
         garbage_zone_hor = []
         i = 0
         print('roads x: ' + str(roads_horizontally))
@@ -112,7 +114,7 @@ class Map:
             if(self.grid[y][0] == 0 and self.grid[y - 1][0] == 0 and self.grid[y + 1][0] == 0):
                 for x in range(self.WIDTH):
                     self.grid[y][x] += 1
-                garbage_zone_vert += [y + 1, y - 1]
+                garbage_zone_hor += [y + 1, y - 1]
                 i += 1
         i = 0
         while i < roads_vertically:
@@ -120,19 +122,47 @@ class Map:
             if(self.grid[0][x] == 0 and self.grid[0][x - 1] == 0 and self.grid[0][x + 1] == 0):
                 for j in self.grid:
                     j[x] += 2
-                garbage_zone_hor += [x + 1, x - 1]
+                garbage_zone_ver += [x + 1, x - 1]
                 i += 1
+        garbage_zone_hor = list(set(garbage_zone_hor))
+        garbage_zone_ver = list(set(garbage_zone_ver))
+        for i in self.grid:
+            print(i)
+        print('hor', garbage_zone_hor)
+        print('ver', garbage_zone_ver)
+        print(self.grid[1][2])
+        garbage_zone = []
+        for i in garbage_zone_hor:
+            for j in range(0, self.WIDTH):
+                if self.grid[i][j] == 0:
+                    garbage_zone.append((i, j))
+        for i in garbage_zone_ver:
+            for j in range(0, self.HEIGHT):
+                if self.grid[j][i] == 0:
+                    garbage_zone.append((j, i))
+        garbage_zone = list(set(garbage_zone))
+        print(garbage_zone)
+        bins = random.choices(garbage_zone, k=self.NUMBER_OF_TRASH)
+        for i in range(self.NUMBER_OF_TRASH):
+            x, y = bins[i]
+            self.grid[x][y] = 4
+        '''for i in garbage_zone_hor:
+            bins_per_zone = random.randint(HEIGHT, HEIGHT*2)
+            for a in range(bins_per_zone):
+                r = random.randint(0, WIDTH)
+                if self.grid[i][r] == 0:
+                    self.grid[i][r] = 4'''
 
-        for i in range(randint(6, 20)):
+        '''for i in range(randint(roads_horizontally*4, roads_horizontally*5)):
             rand_vert = random.choice(garbage_zone_vert)
             rand_trashcan_vert = randint(0, self.WIDTH - 1)
             rand_hor = random.choice(garbage_zone_hor)
             rand_trashcan_hor = randint(0, self.HEIGHT - 1)
-
+            print(garbage_zone_hor)
             if(self.grid[rand_vert][rand_trashcan_vert]) == 0:
                 self.grid[rand_vert][rand_trashcan_vert] = 4
             if(self.grid[rand_trashcan_hor][rand_hor]) == 0:
-                self.grid[rand_trashcan_hor][rand_hor] = 4
+                self.grid[rand_trashcan_hor][rand_hor] = 4'''
 
         self.grid_refactoring()
 
@@ -166,7 +196,7 @@ class Map:
                     self.grid[i][j] = trash.Trash("blue_trash")
                 elif (self.grid[i][j] == 7):
                     self.grid[i][j] = trash.Trash("red_trash")
-        self.fill_with_trash(0.5)
+        self.fill_with_trash(1)
 
 
     def get_grid(self):
