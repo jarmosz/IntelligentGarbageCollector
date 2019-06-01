@@ -9,7 +9,7 @@ class VowpalParser:
         _map = map.Map(self.MAP_RESOLUTION)
         move_list = BreathFirstSearch().start_bfs(_map, 'yellow_trash')
         move_list = [move for move in move_list if move != 'collect']
-        print()
+        print(move_list)
         prev = move_list[0]
         for i in range(1, len(move_list)):
             square_state = self.get_grid_square(_map.get_grid_numerical(), move_list[i])
