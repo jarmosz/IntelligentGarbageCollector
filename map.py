@@ -52,11 +52,11 @@ class Map:
         self.RES_Y = 32 * res
         self.WIDTH = self.RES_X//self.CELL_SIZE
         self.HEIGHT = self.RES_Y//self.CELL_SIZE
-        self.MIN_ROADS_VERTICALLY = res//4
+        self.MIN_ROADS_VERTICALLY = res//5
         self.MAX_ROADS_VERTICALLY = res//3
-        self.MIN_ROADS_HORIZONTALLY = res//4
+        self.MIN_ROADS_HORIZONTALLY = res//5
         self.MAX_ROADS_HORIZONTALLY = res//3
-        self.NUMBER_OF_TRASH = res
+        self.NUMBER_OF_TRASH = res//2
 
 
     def load_images(self):
@@ -141,7 +141,6 @@ class Map:
                 if self.grid[j][i] == 0:
                     garbage_zone.append((j, i))
         garbage_zone = list(set(garbage_zone))
-        print(garbage_zone)
         bins = random.choices(garbage_zone, k=self.NUMBER_OF_TRASH)
         for i in range(self.NUMBER_OF_TRASH):
             x, y = bins[i]

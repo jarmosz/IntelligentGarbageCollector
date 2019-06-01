@@ -7,7 +7,6 @@ from itertools import groupby
 class VowpalParser:
     SQUARE_SIZE = 5
     MAP_RESOLUTION = 40
-
     def collect_data(self):
         f = open("vowpal_data.txt", "w")
         _map = map.Map(self.MAP_RESOLUTION)
@@ -20,7 +19,6 @@ class VowpalParser:
         print(move_list)
         current = move_list[0]
         for i in range(1, len(move_list)):
-            print('curr:', current)
             if move_list[i] == 'collect':
                 square_state = self.get_grid_square(map_numerical, current)
                 move = 'c'                
@@ -28,7 +26,6 @@ class VowpalParser:
                 square_state = self.get_grid_square(map_numerical, move_list[i])
                 move = str(self.parse_move(current, move_list[i]))
                 current = move_list[i]
-            print('move:{}\n{}'.format(move, square_state))
             state = ' '.join(' '.join(str(x) for x in row) for row in square_state)            
             f.write("{}|{}\n".format(str(move), state))
             square_state = self.empty_trash(square_state)
@@ -50,7 +47,6 @@ class VowpalParser:
         x = current_position[0] + self.SQUARE_SIZE//2 #adjusting current position to corrent one
         y = current_position[1] + self.SQUARE_SIZE//2 #after numpy.pad
         square = grid[y-2:y+3, x-2:x+3]
-        #square[2,2] = 5 #truck in the middle
         return square
     
     def empty_trash(self, grid):
