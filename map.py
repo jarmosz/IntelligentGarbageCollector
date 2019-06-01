@@ -44,6 +44,7 @@ class Map:
         self.grid = [[0] * self.WIDTH for i in range(self.HEIGHT)]
         self.load_images()
         self.truck = None
+        self.generate_grid()
 
     def config_window_display(self, res):
         self.RES_X = 32 * res
@@ -165,6 +166,10 @@ class Map:
                     self.grid[i][j] = trash.Trash("blue_trash")
                 elif (self.grid[i][j] == 7):
                     self.grid[i][j] = trash.Trash("red_trash")
+        _truck = truck.Truck(self)
+        _truck.set_current_map_state(self.get_grid())
+        self.set_truck_current_position_on_the_grid(_truck)
+        self.fill_with_trash(0.5)
 
 
     def get_grid(self):

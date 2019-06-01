@@ -1,27 +1,15 @@
 import map
-import truck
-import numpy as np
 from bfs import BreathFirstSearch
-from random import randrange
-
-
 class VowpalParser:
     SQUARE_SIZE = 5
-    MAP_RESOLUTION = 5
+    MAP_RESOLUTION = 6
 
     def collect_data(self):
         f = open("vowpal_data.txt", "w")
-        move_list = []
         _map = map.Map(self.MAP_RESOLUTION)
-        _map.generate_grid()
-        _truck = truck.Truck(_map)
-        _truck.set_current_map_state(_map.get_grid())
-        _map.set_truck_current_position_on_the_grid(_truck)
-        _map.fill_with_trash(0.5)
-        move_list.append((_truck.current_position_x, _truck.current_position_y))
-        move_list += BreathFirstSearch().start_bfs(_map, 'yellow_trash')
+        move_list = BreathFirstSearch().start_bfs(_map, 'yellow_trash')
         move_list = [move for move in move_list if move != 'collect']
-        print(move_list)
+        print()
         prev = move_list[0]
         for i in range(1, len(move_list)):
             square_state = self.get_grid_square(_map.get_grid_numerical(), move_list[i])
@@ -35,15 +23,13 @@ class VowpalParser:
             _map.render_window()
     
     def parse_move(self, previous, next):
-        move = []
         if(previous[0] == next[0] and previous[1] > next[1]):
             return "u"
         elif(previous[0] == next[0] and previous[1] < next[1]):
             return "d"
         elif(previous[1] == next[1] and previous[0] > next[0]):
             return "l"
-        elif(previous[1] == next[1] and previous[0] < next[0]):
-            return "r"
+        return "r"
     
     def get_grid_square(self, grid, current_position):
         x = current_position[0] + self.SQUARE_SIZE//2 #adjusting current position to corrent one
