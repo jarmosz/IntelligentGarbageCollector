@@ -7,21 +7,17 @@ from random import randrange
 
 class VowpalParser:
     SQUARE_SIZE = 5
-    MAP_RESOLUTION = 40
+    MAP_RESOLUTION = 5
 
     def collect_data(self):
         f = open("vowpal_data.txt", "w")
         move_list = []
-        _map = map.Map(6)
+        _map = map.Map(self.MAP_RESOLUTION)
         _map.generate_grid()
         _truck = truck.Truck(_map)
         _truck.set_current_map_state(_map.get_grid())
         _map.set_truck_current_position_on_the_grid(_truck)
-        for i in _map.grid:
-            for j in i:
-                if j.get_type() == 'empty_trash' and randrange(0, 10) > 6:
-                    j.type = "yellow_trash"
-
+        _map.fill_with_trash(0.5)
         move_list.append((_truck.current_position_x, _truck.current_position_y))
         move_list += BreathFirstSearch().start_bfs(_map, 'yellow_trash')
         move_list = [move for move in move_list if move != 'collect']
@@ -50,11 +46,13 @@ class VowpalParser:
             return "r"
     
     def get_grid_square(self, grid, current_position):
-        x = current_position[0] + 2
-        y = current_position[1] + 2
+        x = current_position[0] + self.SQUARE_SIZE//2 #adjusting current position to corrent one
+        y = current_position[1] + self.SQUARE_SIZE//2 #after numpy.pad
         square = grid[y-2:y+3, x-2:x+3]
-        square[2,2] = 5
+        square[2,2] = 5 #truck in the middle
         return square
+    
+    
         
 
         

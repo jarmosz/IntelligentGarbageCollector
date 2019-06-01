@@ -175,13 +175,13 @@ class Map:
 
     def set_grid_cell(self, x, y, new_object):
         self.grid[x][y] = new_object
-
-    def get_grid_part(self, start, stop):
-        x1, y1 = start
-        x2, y2 = stop
-        square = np.array(self.grid)
-        return square[y1:y2+1, x1:x2+1]
     
+    def fill_with_trash(self, prob):
+        for i in self.grid:
+            for j in i:
+                if j.get_type() == 'empty_trash' and random.random() < prob:
+                    j.type = "yellow_trash"
+
     def get_grid_numerical(self):
         grid = np.array(self.grid)
         numerical_grid = np.array([self.type_as_num(row) for row in grid])
