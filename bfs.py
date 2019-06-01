@@ -13,7 +13,8 @@ class BreathFirstSearch:
         type_of_trash = _type_of_trash
         starting_pos = ((_map.truck.get_current_position_x(),
                          _map.truck.get_current_position_y()))
-        map = copy.deepcopy(_map)
+        #map = copy.deepcopy(_map)
+        map = _map
         self.bfs_shortest_path(
             map, starting_pos, _map.truck.find_next_trash_to_visit('yellow_trash'))
         return move_list
@@ -55,6 +56,6 @@ class BreathFirstSearch:
             trash_to_collect = tmp[0]
             map.truck.collect_trash(trash_to_collect)
             move_list += new_path[1:]
-            move_list.append("collect")
+            move_list.append('collect')       
             self.bfs_shortest_path(
                 map,  new_path[-1], map.truck.find_next_trash_to_visit('yellow_trash'))

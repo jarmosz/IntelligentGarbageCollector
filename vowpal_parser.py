@@ -1,5 +1,7 @@
 import map
+import truck
 from bfs import BreathFirstSearch
+from itertools import groupby
 class VowpalParser:
     SQUARE_SIZE = 5
     MAP_RESOLUTION = 6
@@ -7,16 +9,30 @@ class VowpalParser:
     def collect_data(self):
         f = open("vowpal_data.txt", "w")
         _map = map.Map(self.MAP_RESOLUTION)
-        move_list = BreathFirstSearch().start_bfs(_map, 'yellow_trash')
-        move_list = [move for move in move_list if move != 'collect']
+        _truck = truck.Truck(_map)
+        _truck.set_current_map_state(_map.get_grid())
+        _map.set_truck_current_position_on_the_grid(_truck)
+        map_numerical = _map.get_grid_numerical()
+        move_list = [(_truck.current_position_x, _truck.current_position_y)]
+        move_list += BreathFirstSearch().start_bfs(_map, 'yellow_trash')
+        #move_list = [i[0] for i in groupby(move_list)]
+        #move_list = [move for move in move_list if move != 'collect']
         print(move_list)
         prev = move_list[0]
         for i in range(1, len(move_list)):
-            square_state = self.get_grid_square(_map.get_grid_numerical(), move_list[i])
-            state = ' '.join(' '.join(str(x) for x in row) for row in square_state)
-            move = str(self.parse_move(prev, move_list[i]))
+            print('prev:', prev)
+            if move_list[i] == 'collect':
+                square_state = self.get_grid_square(map_numerical, prev)
+                #print('tu',square_state)
+                move = 'c'                
+            else:
+                square_state = self.get_grid_square(map_numerical, move_list[i])
+                move = str(self.parse_move(prev, move_list[i]))
+                prev = move_list[i]
+            print('{}|{}'.format(move, square_state))
+            state = ' '.join(' '.join(str(x) for x in row) for row in square_state)            
             f.write("{}|{}\n".format(str(move), state))
-            prev = move_list[i][:]
+            square_state = self.empty_trash(square_state)
         f.close()
         while(True):
             _map.update_window()
@@ -35,8 +51,22 @@ class VowpalParser:
         x = current_position[0] + self.SQUARE_SIZE//2 #adjusting current position to corrent one
         y = current_position[1] + self.SQUARE_SIZE//2 #after numpy.pad
         square = grid[y-2:y+3, x-2:x+3]
-        square[2,2] = 5 #truck in the middle
+        #square[2,2] = 5 #truck in the middle
         return square
+    
+    def empty_trash(self, grid):
+        if grid[1,2] == 3:
+            grid[1,2] = 2
+            return grid
+        elif grid[2,1] == 3:
+            grid[2,1] = 2
+            return grid
+        elif grid[3,2] == 3:
+            grid[3,2] = 2
+            return grid
+        elif grid[2,3] == 3:
+            grid[2,3] = 2
+            return grid
     
     
         
