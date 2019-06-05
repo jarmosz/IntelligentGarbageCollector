@@ -3,16 +3,15 @@ import truck
 from bfs import BreathFirstSearch
 from itertools import groupby
 
-# 0 - grass 1 - road 2 - trash empty 3 - trash full
-
-
+# 0-grass 1-road 2-trash empty 3-trash full
+#5-collect 6-up 7-down 8-left 9-right
 class VowpalParser:
     SQUARE_SIZE = 5
     MAP_RESOLUTION = 10
     NUMBER_OF_MAPS = 1
 
     def collect_data(self):
-        f = open("vowpal_data.txt", "w")
+        file = open("vowpal_data.txt", "w")
         for j in range(self.NUMBER_OF_MAPS):
             _map = map.Map(self.MAP_RESOLUTION)
             _truck = truck.Truck(_map)
@@ -23,41 +22,37 @@ class VowpalParser:
                           _truck.current_position_y)]
             move_list += BreathFirstSearch().start_bfs(_map, 'yellow_trash')
             prev = move_list[0]
-            print(move_list)
-            print(map_numerical)
-            #for i in move_list[2:]:
-            #    if i == 'collect'
+            print(move_list, map_numerical)
             for i in range(1, len(move_list)):
+                state = ' '
+                index = 0
+
                 if move_list[i] == 'collect':
                     square_state = self.get_grid_square(map_numerical, prev)
-                    move = 'c'
-                    state = ' '.join(' '.join(str(x) for x in row)
-                                     for row in square_state)
+                    move = 5
                 else:
                     square_state = self.get_grid_square(map_numerical, prev)
                     move = str(self.parse_move(prev, move_list[i]))
                     prev = move_list[i]
-                #print('{}\n{}'.format(move, square_state))
-                state = ' '.join(' '.join(str(x) for x in row)
-                                 for row in square_state)
-                f.write("{}|{}\n".format(str(move), state))
+                for rows in square_state:
+                    for value in rows:
+                        state += ''.join('f{}:{} '.format(index, value))
+                        index += 1
+                file.write("{} | {}\n".format(str(move), state))
                 square_state = self.empty_trash(square_state)
-            f.close()
-        while(True):
-            _map.update_window()
-            _map.render_window()
+            file.close()
 
     def parse_move(self, previous, next):
         if(previous[0] == next[0] and previous[1] > next[1]):
-            return "u"
+            return 6
         elif(previous[0] == next[0] and previous[1] < next[1]):
-            return "d"
+            return 7
         elif(previous[1] == next[1] and previous[0] > next[0]):
-            return "l"
-        return "r"
+            return 8
+        return 9
 
     def get_grid_square(self, grid, current_position):
-        # adjusting current position to corrent one
+        # adjusting current position to correct one
         x = current_position[0] + self.SQUARE_SIZE//2
         y = current_position[1] + self.SQUARE_SIZE//2  # after numpy.pad
         square = grid[y-2:y+3, x-2:x+3]
