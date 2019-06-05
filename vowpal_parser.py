@@ -22,7 +22,6 @@ class VowpalParser:
                           _truck.current_position_y)]
             move_list += BreathFirstSearch().start_bfs(_map, 'yellow_trash')
             prev = move_list[0]
-            print(move_list, map_numerical)
             for i in range(1, len(move_list)):
                 state = ' '
                 index = 0
