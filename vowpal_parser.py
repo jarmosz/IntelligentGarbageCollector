@@ -8,7 +8,7 @@ from itertools import groupby
 class VowpalParser:
     SQUARE_SIZE = 5
     MAP_RESOLUTION = 10
-    NUMBER_OF_MAPS = 1
+    NUMBER_OF_MAPS = 5
     PAD = int(SQUARE_SIZE//2)
 
     def collect_data(self):
