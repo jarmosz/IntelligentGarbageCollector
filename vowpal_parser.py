@@ -6,7 +6,7 @@ from itertools import groupby
 # 0-grass 1-road 2-trash empty 3-trash full
 #5-collect 6-up 7-down 8-left 9-right
 class VowpalParser:
-    SQUARE_SIZE = 9
+    SQUARE_SIZE = 5
     MAP_RESOLUTION = 10
     NUMBER_OF_MAPS = 1
     PAD = int(SQUARE_SIZE//2)
@@ -39,7 +39,7 @@ class VowpalParser:
                         index += 1
                 file.write("{} | {}\n".format(str(move), state))
                 square_state = self.empty_trash(square_state)
-            file.close()
+        file.close()
 
     def parse_move(self, previous, next):
         if(previous[0] == next[0] and previous[1] > next[1]):
