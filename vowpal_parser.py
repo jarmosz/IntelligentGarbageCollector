@@ -6,7 +6,7 @@ from itertools import groupby
 # 0-grass 1-road 2-trash empty 3-trash full
 #5-collect 6-up 7-down 8-left 9-right
 class VowpalParser:
-    SQUARE_SIZE = 7
+    SQUARE_SIZE = 9
     MAP_RESOLUTION = 10
     NUMBER_OF_MAPS = 1
     PAD = int(SQUARE_SIZE//2)
@@ -37,7 +37,6 @@ class VowpalParser:
                     for value in rows:
                         state += ''.join('f{}:{} '.format(index, value))
                         index += 1
-                #print(square_state)
                 file.write("{} | {}\n".format(str(move), state))
                 square_state = self.empty_trash(square_state)
             file.close()
@@ -60,7 +59,6 @@ class VowpalParser:
         return square
 
     def empty_trash(self, grid):
-        print(grid)
         pos = self.PAD
         if grid[pos-1, pos] == 3:
             grid[pos-1, pos] = 2
