@@ -191,10 +191,10 @@ class Map:
                 if j.get_type() == 'empty_trash' and random.random() < prob:
                     j.type = "yellow_trash"
 
-    def get_grid_numerical(self):
+    def get_grid_numerical(self, pad):
         grid = np.array(self.grid)
         numerical_grid = np.array([self.type_as_num(row) for row in grid])
-        numerical_grid = np.pad(numerical_grid, pad_width=2, mode='constant')
+        numerical_grid = np.pad(numerical_grid, pad_width=pad, mode='constant')
         return numerical_grid
 
     def type_as_num(self, objects):
