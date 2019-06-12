@@ -382,6 +382,10 @@ class Truck:
             self.move_right()
         elif move == Move.MOVE_TOP:
             self.move_top()
+        else:
+           tmp = self.find_trash_around('yellow_trash')
+           if tmp!=[]:
+               self.collect_trash(tmp[0])
 
     def move_to(self, x, y):
         if not self.can_move_to(x, y):
